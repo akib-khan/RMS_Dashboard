@@ -281,6 +281,35 @@ header nav a.active:after {
 
 }
 
+.button_cpy {
+	background-color: green;
+	border-radius: 100rem;
+	color: #ffffff;
+	transition: all .3s ease-in-out 0s;
+	display: inline-block;
+	margin-top: 1rem;
+	padding: .8rem 1.2rem .7rem;
+	text-transform: uppercase;
+	text-decoration: none;
+	font-weight: 500;
+	height: 3.2rem;
+	text-indent: -.05rem;
+	/*margin-top: 1rem;
+	text-indent: -.05rem;
+	text-transform: uppercase;
+	padding: .8rem 1.2rem .7rem;
+	text-transform: uppercase;
+	text-decoration: none;
+	letter-spacing: .1rem;
+	overflow: hidden;
+	font-size: 0.9rem;
+  	text-overflow: ellipsis;
+	font-size: .9rem;
+	font-weight: 500;
+	height: 3.2rem;*/
+
+}
+
 .button1 {
 	background-color: #68b9ec;
 	border-radius: 100rem;

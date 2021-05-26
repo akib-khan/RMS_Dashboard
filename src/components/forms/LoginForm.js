@@ -2,6 +2,8 @@ import React from 'react';
 import propTypes from 'prop-types';
 import {Button} from 'semantic-ui-react';
 import {Link} from "react-router-dom";
+
+
  class LoginForm extends React.Component {
    state = {
 
@@ -33,7 +35,7 @@ import {Link} from "react-router-dom";
 
         <form onSubmit = {this.onSubmit} >
             <label htmlFor="email"><b>Email</b></label><br/>
-            <input type="email" placeholder="Enter Email" id="email" name="email" value={data.email} onChange = {this.onChange} required/>
+            <input type="email" placeholder="Enter Email" id="email" name="email" value={data.text} onChange = {this.onChange} required/>
 
             <br/><br/>
 
@@ -42,8 +44,8 @@ import {Link} from "react-router-dom";
 
 
             <br/><br/>
-            {/*<Button type="submit" primary>Login</Button>*/}
-            <Link to="/landing" className="button">Login</Link>
+            <Button type="submit" primary>Login</Button>
+            {/*<Link to="/landing" className="button">Login</Link>*/}
         </form>
 
 

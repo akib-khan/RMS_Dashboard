@@ -3,6 +3,19 @@ import styled from "styled-components";
 import { useTable, usePagination } from "react-table";
 import {Button} from 'semantic-ui-react'
 import makeData from "./makeData";
+import {fetchRMSLimits} from '../../redux/ActionCreators'
+import { connect } from 'react-redux';
+
+const mapStateToProps = state => {
+  return {
+    rmsLimits: state.rmsLimits
+  }
+}
+
+const mapDispatchToProps = dispatch => ({
+  fetchRMSLimits: () => dispatch( fetchRMSLimits() )
+});
+
 
 const Styles = styled.div`
   padding: 1rem;
@@ -199,7 +212,8 @@ function Table({ columns, data, updateMyData, skipPageReset }) {
   );
 }
 
-function RMSTable() {
+function RMSTable(props) {
+  console.log(" Got props in rmstable? ",props);
   const columns = React.useMemo(
     () => [
       {
@@ -219,6 +233,25 @@ function RMSTable() {
     ],
     []
   )
+
+  const CreateRMSCell = (key,value) => {
+    return{
+      firstName: key,
+      lastName: value
+    }
+  }
+  const fetchData = () => {
+    this.props.fetchServers()
+    .then(rmslimits => {
+      rmslimits.map( (limit, index ) => {
+        return(
+          ...CreateRMSCell(limit.key,limit.value), 
+        )
+      } 
+      )     
+    } )
+
+  }
 
   const [data, setData] = React.useState(() => makeData(20));
   const [originalData] = React.useState(data);
@@ -256,8 +289,8 @@ function RMSTable() {
   // Let's add a data resetter/randomizer to help
   // illustrate that flow...
   const resetData = () => setData(originalData);
-
   return (
+    
     <Styles>
       <Table
         columns={columns}
@@ -265,10 +298,10 @@ function RMSTable() {
         updateMyData={updateMyData}
         skipPageReset={skipPageReset}
       />
-      <Button >Submit</Button>
-      <Button >Refresh</Button>
+      <Button className="button_cpy">Submit</Button>
+      <Button className="button_cpy">Refresh</Button>
     </Styles>
   );
 }
 
-export default RMSTable;
+export default connect(mapStateToProps,mapDispatchToProps)(RMSTable);

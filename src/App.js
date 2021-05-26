@@ -22,9 +22,9 @@ class App  extends Component {
 
     <section className="hero">
       <Route path="/" exact component = {HomePage}/>
-      <Route path="/login" exact component = {LoginPage}/>
+      <Route path="/login" exact component = { props => <LoginPage {...props} /> } />
       <Route path="/registration" exact component = {RegistrationPage}/>
-      <Route path="/landing" exact component = {LandingPage}/>
+      <Route path="/landing" exact component = { props => <LandingPage {...props} /> } />
 
     </section>
     </div>
