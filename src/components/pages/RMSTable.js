@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useTable, usePagination } from "react-table";
 import {Button} from 'semantic-ui-react'
 import makeData from "./makeData";
-import {fetchRMSLimits} from '../../redux/ActionCreators'
+import {fetchRMSLimits, postRMSLimits } from '../../redux/ActionCreators'
 import { connect } from 'react-redux';
 
 const mapStateToProps = state => {
@@ -13,7 +13,8 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = dispatch => ({
-  fetchRMSLimits: () => dispatch( fetchRMSLimits() )
+  fetchRMSLimits: (server) => dispatch( fetchRMSLimits(server) ),
+  postRMSLimits : ( server, data ) => dispatch( postRMSLimits(server, data) )
 });
 
 
@@ -213,7 +214,34 @@ function Table({ columns, data, updateMyData, skipPageReset }) {
 }
 
 function RMSTable(props) {
-  console.log(" Got props in rmstable? ",props);
+  
+  
+  const [data, setData] = React.useState([]);
+  const [originalData,setOriginalData] = React.useState(data);
+  const [skipPageReset, setSkipPageReset] = React.useState(false);
+
+  React.useEffect(() => {
+    //setSkipPageReset(false);
+    props.fetchRMSLimits(props.server)
+    .then( rmsvalues => {
+      //console.log("changing rmsvalues values",JSON.stringify(data)," ",JSON.stringify(rmsvalues));
+      //console.log("changing1 rmsvalues values",data," ",rmsvalues);
+      setData(rmsvalues);
+      setOriginalData(rmsvalues);
+      setSkipPageReset(true);
+    })
+  }, [] );
+  
+  
+  
+  // We need to keep the table from resetting the pageIndex when we
+  // Update data. So we can keep track of that flag with a ref.
+
+  // When our cell renderer calls updateMyData, we'll use
+  // the rowIndex, columnId and new value to update the
+  // original data
+  
+    //console.log(" Got props in rmstable? ",props);
   const columns = React.useMemo(
     () => [
       {
@@ -233,36 +261,8 @@ function RMSTable(props) {
     ],
     []
   )
+  //fetchMyData();
 
-  const CreateRMSCell = (key,value) => {
-    return{
-      firstName: key,
-      lastName: value
-    }
-  }
-  const fetchData = () => {
-    this.props.fetchServers()
-    .then(rmslimits => {
-      rmslimits.map( (limit, index ) => {
-        return(
-          ...CreateRMSCell(limit.key,limit.value), 
-        )
-      } 
-      )     
-    } )
-
-  }
-
-  const [data, setData] = React.useState(() => makeData(20));
-  const [originalData] = React.useState(data);
-  const [skipPageReset, setSkipPageReset] = React.useState(false);
-
-  // We need to keep the table from resetting the pageIndex when we
-  // Update data. So we can keep track of that flag with a ref.
-
-  // When our cell renderer calls updateMyData, we'll use
-  // the rowIndex, columnId and new value to update the
-  // original data
   const updateMyData = (rowIndex, columnId, value) => {
     // We also turn on the flag to not reset the page
     setSkipPageReset(true);
@@ -282,24 +282,66 @@ function RMSTable(props) {
   // After data chagnes, we turn the flag back off
   // so that if data actually changes when we're not
   // editing it, the page is reset
-  React.useEffect(() => {
+  /*React.useEffect(() => {
     setSkipPageReset(false);
-  }, [data]);
+  }, [data]);*/
 
   // Let's add a data resetter/randomizer to help
   // illustrate that flow...
   const resetData = () => setData(originalData);
-  return (
+  const refreshData = (e) => {
+    props.fetchRMSLimits(props.server)
+    .then( rmsvalues => {
+      //console.log("changing rmsvalues values",JSON.stringify(data)," ",JSON.stringify(rmsvalues));
+      //console.log("changing1 rmsvalues values",data," ",rmsvalues);
+      setData(rmsvalues);
+      setOriginalData(rmsvalues);
+      setSkipPageReset(true);
+    })
+  }
+
+  const postData= (e) => {
+    console.log("data: ",JSON.stringify(data)," originalData: ",JSON.stringify(originalData) );
+    if( JSON.stringify(data) === JSON.stringify(originalData) ) {
+      console.log("Updating same data");
+      alert(" Updating same data");
+    }
+    else {
+      console.log( " sending post rms!");
+      props.postRMSLimits(props.server,data)
+      .then( rdata => {
+        setOriginalData(data);
+        alert(" values are updated!!");
+      })
+    }
+  }
+  
+  const onRowClick = (state, rowInfo, column, instance) => {
+    console.log(" On ROwClick() rowInfo: ",rowInfo);
+    return {
+      onClick: e => {
+        console.log(" On ROwClick() event ",e);
+        //e.stopPropagation();
+        //if (e.target.type == "submit") {
+          alert(rowInfo.original.name)
+        //}
+        // console.log(e.target.type, rowInfo)
+      }
+    }
     
+  }
+
+  return(  
     <Styles>
       <Table
         columns={columns}
+        getTrProps={onRowClick}
         data={data}
         updateMyData={updateMyData}
         skipPageReset={skipPageReset}
       />
-      <Button className="button_cpy">Submit</Button>
-      <Button className="button_cpy">Refresh</Button>
+      <Button className="button_cpy" onClick={postData}>Submit</Button>
+      <Button className="button_cpy" onClick={refreshData}>Refresh</Button>
     </Styles>
   );
 }

@@ -26,9 +26,12 @@ const newPerson = () => {
 }
 
 export default function makeData(...lens) {
+  console.log("lens: ",lens);
   const makeDataLevel = (depth = 0) => {
     const len = lens[depth]
+    console.log("lens1: ",lens," depth: ",depth," lens_depth: ",lens[depth]);
     return range(len).map(d => {
+      { console.log("lens2: ",lens," depth: ",depth," lens_depth: ",lens[depth]); }
       return {
         ...newPerson(),
         subRows: lens[depth + 1] ? makeDataLevel(depth + 1) : undefined,

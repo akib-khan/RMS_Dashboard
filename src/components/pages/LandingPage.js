@@ -3,9 +3,9 @@ import {Link, withRouter, Redirect, Switch } from "react-router-dom";
 import {Button } from 'semantic-ui-react';
 import RMSTable from './RMSTable';
 import StrategyTable from './StrategyTable'
-import {fetchServers} from '../../redux/ActionCreators'
+import {fetchServers, infraStart, infraSQOff, strategyStart, strategySQOff, strategyCancel,strategyKill,orsSQOff} from '../../redux/ActionCreators'
 import { connect } from 'react-redux';
-
+import CellEditable from './MaterialTable'
 const mapStateToProps = state => {
   return {
     servers: state.servers
@@ -13,7 +13,14 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = dispatch => ({
-  fetchServers: () => dispatch( fetchServers() )
+  fetchServers: () => dispatch( fetchServers() ),
+  infraStart: (server) => dispatch( infraStart(server)),
+  infraSQOff: (server) => dispatch( infraSQOff(server)),
+  strategyStart: (server) => dispatch( strategyStart(server)),
+  strategySQOff: (server) => dispatch( strategySQOff(server)),
+  strategyKill: (server) => dispatch( strategyKill(server)),
+  strategyCancel: (server) => dispatch( strategyCancel(server)),
+  orsSQOff: (server) => dispatch( orsSQOff(server))
 });
 
 
@@ -23,7 +30,6 @@ class LandingPage extends React.Component{
   componentDidMount() {
     this.props.fetchServers(); 
   }
-
   constructor(props){
     super(props);
     this.state = { 
@@ -71,15 +77,65 @@ openORS() {
 render(){
   //let Strategies;
   //console.log("Landing page render");
+
+  const strategyStart = () => {
+    this.props.strategyStart(document.getElementById("servers").value)
+    .then( response => {
+      console.log(" Strategy Start sent");
+    })
+  }
+
+  const strategySQOff = () => {
+    this.props.strategySQOff(document.getElementById("servers").value)
+    .then( response => {
+      console.log(" Strategy SQOff sent");
+    })
+  }
+
+  const strategyKill = () => {
+    this.props.strategyKill(document.getElementById("servers").value)
+    .then( response => {
+      console.log(" Strategy Kill sent");
+    })
+  }
+
+  const strategyCancel = () => {
+    this.props.strategyCancel(document.getElementById("servers").value)
+    .then( response => {
+      console.log(" Strategy Cancel sent");
+    })
+  }
+
+  const infraStart = () => {
+    this.props.infraStart(document.getElementById("servers").value)
+    .then( response => {
+      console.log(" infra Start sent");
+    })
+  }
+
+  const infraSQOff = () => {
+    this.props.infraSQOff(document.getElementById("servers").value)
+    .then( response => {
+      console.log(" Infra SQOff sent");
+    })
+  }
+
+  const orsSQOff = () => {
+    this.props.orsSQOff(document.getElementById("servers").value)
+    .then( response => {
+      console.log(" ors SQOff sent");
+    })
+  }
+
   const strategies = () => {
     if( this.state.strategyOpen ) {
       return(
         <React.Fragment>
          <div>
-          <Button className="button_cpy" id="Strategies" onClick={this.openStrategy} primary>Start</Button>
-          <Button className="button_cpy" id="Strategies" onClick={this.openStrategy} primary>Kill</Button>
-          <Button className="button_cpy" id="Strategies" onClick={this.openStrategy} primary>Cancel</Button>
-          <Button className="button_cpy" id="Strategies" onClick={this.openStrategy} primary>Sq_Off</Button>
+          <Button className="button_cpy" id="Strategies" onClick={strategyStart} primary>Start</Button>
+          <Button className="button_cpy" id="Strategies" onClick={strategyKill} primary>Kill</Button>
+          <Button className="button_cpy" id="Strategies" onClick={strategyCancel} primary>Cancel</Button>
+          <Button className="button_cpy" id="Strategies" onClick={strategySQOff} primary>Sq_Off</Button>
           {/*<Button className="button" id="Strategies" onClick={this.openStrategy} primary>Refresh</Button>*/}
         </div>
         {/*<StrategyTable />*/}
@@ -93,15 +149,29 @@ render(){
       );
     }
   }
-  const RMSLimits = this.state.rmsOpen?<RMSTable server={document.getElementById("servers").value}/> : <div></div>;
+  
+  const RMSLimits = () => { 
+    if(this.state.rmsOpen){
+      return(
+        <React.Fragment>
+        <CellEditable server={document.getElementById("servers").value}/>
+        </React.Fragment>
+      );
+    }
+    else {
+      return(
+        <React.Fragment></React.Fragment>
+      );
+    }
+  }
 
   const infra = () => {
     if( this.state.infraOpen ) {
       return(
         <React.Fragment>
          <div>
-          <Button className="button_cpy" id="Strategies" onClick={this.openStrategy} primary>Start</Button>
-          <Button className="button_cpy" id="Strategies" onClick={this.openStrategy} primary>Sq_Off</Button>
+          <Button className="button_cpy" id="Strategies" onClick={infraStart} primary>Start</Button>
+          <Button className="button_cpy" id="Strategies" onClick={infraSQOff} primary>Sq_Off</Button>
           {/*<Button className="button" id="Strategies" onClick={this.openStrategy} primary>Refresh</Button>*/}
         </div>
         </React.Fragment>
@@ -120,7 +190,7 @@ render(){
       return(
         <React.Fragment>
          <div>
-          <Button className="button_cpy" id="Strategies" onClick={this.openStrategy} primary>Sq_Off</Button>
+          <Button className="button_cpy" id="Strategies" onClick={orsSQOff} primary>Sq_Off</Button>
           {/*<Button className="button" id="Strategies" onClick={this.openStrategy} primary>Refresh</Button>*/}
         </div>
         </React.Fragment>
@@ -187,7 +257,7 @@ render(){
         <div>
         <Button id="RMSLimits" onClick={this.openRMSLimits} >RMS_Limits</Button>
         {/*<Link className="button" >Login</Link>*/}
-        {RMSLimits}
+        {RMSLimits()}
         </div>
         <div>
         <Button id="Infra" onClick={this.openInfra} >Infra</Button>
@@ -197,6 +267,7 @@ render(){
         <Button id="ORS" onClick={this.openORS} >ORS</Button>
         {ors()}
         </div>
+        {/*<CellEditable server={document.getElementById("servers").value}/>*/}
       </div>
 
     );
