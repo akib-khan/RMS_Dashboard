@@ -57,19 +57,19 @@ getQueryVariable(variable) {
          return(false);
 }
 openStrategy() {
-  this.setState(prevState => ({ strategyOpen: !prevState.strategyOpen }));
+  this.setState(prevState => ({ strategyOpen: !prevState.strategyOpen, rmsOpen: false, infraOpen:false, orsOpen:false }));
 }
 
 openRMSLimits() {
-  this.setState(prevState => ( { rmsOpen: !prevState.rmsOpen }));  
+  this.setState(prevState => ( { rmsOpen: !prevState.rmsOpen, infraOpen:false, orsOpen:false, strategyOpen:false }));  
 }
 
 openInfra() {
-  this.setState(prevState => ( { infraOpen: !prevState.infraOpen }));
+  this.setState(prevState => ( { infraOpen: !prevState.infraOpen,  orsOpen:false, strategyOpen:false , rmsOpen: false }));
 }
 
 openORS() {
-  this.setState(prevState => ( { orsOpen: !prevState.orsOpen }));
+  this.setState(prevState => ( { orsOpen: !prevState.orsOpen, strategyOpen:false , rmsOpen: false ,  infraOpen: false }));
 }
 /*const servers = (props) => {
 

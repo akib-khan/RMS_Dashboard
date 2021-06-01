@@ -19,6 +19,7 @@ import Search from "@material-ui/icons/Search";
 import ViewColumn from "@material-ui/icons/ViewColumn";
 import { withStyles } from "@material-ui/core/styles";
 import { connect } from 'react-redux';
+import Box from '@material-ui/core/Box'
 
 import {fetchRMSLimits, postRMSLimits } from '../../redux/ActionCreators'
 
@@ -108,7 +109,7 @@ function CellEditable(props) {
 
     //{ console.log( "data: ",data); }
     return (
-     <React.Fragment>
+     <Box mt="1rem" >
         <MaterialTable
             icons={tableIcons}
             title="RMS Limits"
@@ -141,7 +142,7 @@ function CellEditable(props) {
         />
         <Button className="button_cpy" onClick={postData}>Submit</Button>
         <Button className="button_cpy" onClick={refreshData}>Refresh</Button>
-      </React.Fragment>
+      </Box>
     )
   }
 
